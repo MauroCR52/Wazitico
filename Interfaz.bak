@@ -84,8 +84,6 @@
                  (set! grafoVacio (agregar_arista grafoVacio a b c))
                  (mostrar-grafo grafoVacio)
 
-                 ;(displayln (todas_rutas ))
-
                  (define nodoA "")
                  (define nodoB "")
                  (define posx1 0)
@@ -195,10 +193,8 @@
      [callback (lambda (button event)
                  (define origen (send choice1 get-string-selection))
                  (define destino (send choice2 get-string-selection))
-                 ;[print origen]
-                 ;[print destino]
-                 (print (todas_rutas origen destino grafoVacio))
-                 (dib_rutas (todas_rutas origen destino grafoVacio)))])
+                 [print origen]
+                 [print destino])])
 
 
 ; Se crea la canva donde se va a generar el grafo
@@ -210,7 +206,6 @@
 
 
 ; Funciones para dibujar nodos y aristas
-
 
 (define dc2 (send canva2 get-dc))
 
@@ -226,12 +221,6 @@
   (send dc2 set-brush "teal" 'solid)
   (send dc2 draw-spline (+ 35 x1) (+ 35 y1) (+ 35 x1) (+ 35 y1) (+ 35 x2) (+ 35 y2))
   (send dc2 draw-ellipse (+ 30 x2) (+ 30 y2) 10 10))
-
-(define (dib_rutas lista)
-  (send dc2 set-brush "gray" 'solid)
-  (send dc2 draw-rectangle 300 410 300 40)
-  (send dc2 draw-text "Rutas encontradas:" 150 420)
-  (send dc2 draw-text (format "~a" lista) 350 420))
 
 
 

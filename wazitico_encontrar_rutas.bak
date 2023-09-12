@@ -1,7 +1,5 @@
 #lang racket
-
-(provide todas_rutas)
-;(define g '((C((E 4)))(B((C 2)))(A((B 2)(E 6)))))
+(define g '((C((E 4)))(B((C 2)))(A((B 2)(E 6)))))
 
 
 ;invertir un nodo y sus elementos
