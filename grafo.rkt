@@ -1,26 +1,33 @@
 #lang racket
 
-(define (grafoVacio)
-  '())
+(provide agregar_arista mostrar-grafo)
 
-(define (agregar-arista grafo origen destino peso)
+;Funcion que agrega un nodo junto con el destino y el peso al grafo
+(define (agregar_arista grafo origen destino peso)
   (cond
     ((equal? grafo '()) (list (list origen (list (list destino peso)))))
     (else 
-      (cond ((nodo-existe? origen grafo)
-        (define grafoMovido (mover-nodo-origen-al-inicio grafo origen))
-        (define grafoXD  grafoMovido)
-        (grafo_actualizado (list(list (caar grafoXD)(list (caadar grafoXD)(append (list destino peso))))) (cdr grafoMovido)))
+      (cond ((nodo_existe? origen grafo) ;en caso de que ya haya un nodo con el origen que vamos a meter
+        ;Movemos el nodo con el destino existente al inicio del grafo para manipular mejor el grafo
+        (define grafo_movido (mover_al_inicio grafo origen))
 
+        ;Aquí vamos a separar el grafo en dos diferentes, una compuesta solo con el nodo con el origen a insertar
+        ;y la otra con el resto del grafo para despues ir insertando uno por uno los nodos de este la nuevo grafo actualizado
+        (define grafo_a_actualizar  grafo_movido)
+
+        (grafo_actualizado (list(list (caar grafo_a_actualizar)(append (cadar grafo_a_actualizar)(list(list destino peso))))) (cdr grafo_movido)))
+        
         (else
           (append grafo (list (list origen (list (list destino peso))))))))))
 
-(define (grafo_actualizado grafoNuevo grafoViejo)
-  (cond ((null? grafoViejo) grafoNuevo)
+;Funcion que une el grafo con el nuevo destino al grafo con el resto de nodos
+(define (grafo_actualizado grafo_nuevo grafo_sin_origen)
+  (cond ((null? grafo_sin_origen) grafo_nuevo)
     (else
-      (cons (car grafoViejo) (grafo_actualizado grafoNuevo (cdr grafoViejo))))))
+      (cons (car grafo_sin_origen) (grafo_actualizado grafo_nuevo (cdr grafo_sin_origen))))))
 
-(define (mover-nodo-origen-al-inicio grafo nodo-origen)
+;Funcion que busca un nodo de origen del grafo y lo pasa al inicio
+(define (mover_al_inicio grafo nodo-origen)
   (define (auxiliar grafo nodo-origen coincidentes no-coincidentes)
     (cond
       ((null? grafo)
@@ -29,11 +36,8 @@
        (auxiliar (cdr grafo) nodo-origen (append coincidentes (list (car grafo))) no-coincidentes))
       (else
        (auxiliar (cdr grafo) nodo-origen coincidentes (append no-coincidentes (list (car grafo)))))))
-  
   (auxiliar grafo nodo-origen '() '()))
 
-
-  
 (define (eliminar-nodo-origen grafo nodo-origen)
   (cond
     ((null? grafo) '())                       ; Si la lista es vacía, retornar lista vacía.
@@ -42,42 +46,35 @@
     (else (cons (car grafo)                    ; Si no coincide, mantener el nodo actual
                 (eliminar-nodo-origen (cdr grafo) nodo-origen))))) ; Llamar recursivamente para el resto de la lista.
 
-
-(define (nodo-existe? nombre grafo)
+;Funcion booleana que recibe un nodo e indica si ya hay un nodo de origen con el nodo indicado
+(define (nodo_existe? nombre grafo)
   (define grafo2 grafo)
   (cond
-    [(null? grafo) #f] ; Si el grafo está vacío, el nodo origen no existe.
-    [(eq? nombre (caar grafo2)) #t] ; Compara el nombre con el nombre del primer nodo.
-    [else
-     (nodo-existe? nombre (cdr grafo2))]))
+    ((null? grafo) #f)
+    ((string=? nombre (caar grafo))  #t) 
+    (else
+     (nodo_existe? nombre (cdr grafo)))))
 
 (define (mostrar-grafo grafo)
   (display "Grafo:")
   (displayln grafo))
 
 (define (main)
-  (define grafo1 (grafoVacio))
+  (define grafo1 '())
   (displayln "Grafo vacío creado.")
   
-  (define grafo2 (agregar-arista grafo1 "Costa rica" 'B 1))
+  (define grafo2 (agregar_arista grafo1 "A" "B" 2))
   (mostrar-grafo grafo2)
 
-  (define grafo3 (agregar-arista grafo2 'B 'C 2))
+  (define grafo3 (agregar_arista grafo2 "B" "C" 2))
   (mostrar-grafo grafo3)
 
-  (define grafo4 (agregar-arista grafo3 'C 'D 3))
+  (define grafo4 (agregar_arista grafo3 "C" "E" 4))
   (mostrar-grafo grafo4)
 
-  (define grafo5 (agregar-arista grafo4 'D 'E 4))
+  (define grafo5 (agregar_arista grafo4 "B" "E" 6))
   (mostrar-grafo grafo5)
-
-  (define grafo6 (agregar-arista grafo5 'B 'J 5))
-  (mostrar-grafo grafo6)
-
-  (define grafo7 (agregar-arista grafo6 'C 'I 10))
-  (mostrar-grafo grafo7)
-
+  
   )
-
 
 (main)

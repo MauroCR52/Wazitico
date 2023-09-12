@@ -78,10 +78,10 @@
                    (else (send choice2 append b)))
 
                  
-                 ;(print d)
+                 ;(print a)
                  ;(print lista_nodos)
                  
-                 (set! grafoVacio (agregar-arista grafoVacio a b c))
+                 (set! grafoVacio (agregar_arista grafoVacio a b c))
                  (mostrar-grafo grafoVacio)
 
                  (define nodoA "")
