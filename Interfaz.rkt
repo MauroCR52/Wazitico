@@ -1,5 +1,7 @@
 #lang racket/gui
 (require wxme/image)
+(require "grafo.rkt")
+
 
 ; Ventana principal
 (define ventana (new frame% [label "Wazitico"]
@@ -31,10 +33,18 @@
 (define lista_y  '(130 250 40 40 40 340 340 340 130 250 0))
 (define lista_nodos null)
 
+(define lista_posa null)
+(define lista_posb null)
+
 
 ; Widgets del primer panel
 
-(define lista "")
+(define grafoVacio ;Grafo que va a ser iterado y cambiado en cada iteración
+  '())
+
+
+(define listaA null)
+(define listaB null)
 (define ele null)
 (define texto1 (new text-field% [parent panel1] [label "            Ingrese un origen "]))
 (define texto2 (new text-field% [parent panel1] [label "            Ingrese un destino"]))
@@ -68,13 +78,37 @@
                    (else (send choice2 append b)))
 
                  
-                 (print d)
+                 ;(print d)
                  ;(print lista_nodos)
-
                  
-                 (cond ((miembro a lista_nodos) print "HOLA"); dib_line (car  lista_x) (car  lista_y) (cadr lista_x) (cadr lista_y))
+                 (set! grafoVacio (agregar-arista grafoVacio a b c))
+                 (mostrar-grafo grafoVacio)
+
+                 (define nodoA "")
+                 (define nodoB "")
+                 (define posx1 0)
+                 (define posy1 0)
+                 (define posx2 0)
+                 (define posy2 0)
+                 (cond ((miembro a lista_nodos))
                        (else
-                        (dib_line (car lista_x) (car lista_y) (cadr lista_x) (cadr lista_y))
+                        ;(dib_line (car lista_x) (car lista_y) (cadr lista_x) (cadr lista_y))
+                        (define pos null)
+                        (set! pos (append pos (list a (car lista_x) (car lista_y))))
+
+                        (set! lista_posa (cdr (cons lista_posa pos)))
+                        ;(print lista_pos)
+                        ;NODO cadr lista_posa
+                        ;X cadddr lista_posa
+                        ;Y caddr lista_posa
+                        
+                        (set! nodoA(car lista_posa))
+                        (set! posx1(cadr lista_posa))
+                        (set! posy1(caddr lista_posa))
+                        (set! listaA (append listaA lista_posa))
+                        ;(print listaA)
+                        ;(print nodoA)
+                 
                         (dibujar (car lista_x) (car lista_y) a)
                         (set! lista_x (cdr lista_x))
                         (set! lista_y (cdr lista_y))
@@ -82,12 +116,38 @@
                  (cond ((miembro b lista_nodos) dib_line (car  lista_x) (car  lista_y) (cadr lista_x) (cadr lista_y))
                        (else
                         ;(dib_line (car lista_x) (car lista_y) (cadr lista_x) (cadr lista_y))
+                        (define pos null)
+                        (set! pos (append pos (list b (car lista_x) (car lista_y))))
+
+                        (set! lista_posb (cdr (cons lista_posb pos)))
+                        ;(print lista_pos)
+                        ;NODO cadr lista_posb
+                        ;X cadddr lista_posb
+                        ;Y caddr lista_posb
+                        
+                        (set! nodoB(car lista_posb))
+                        (set! posx2(cadr lista_posb))
+                        (set! posy2(caddr lista_posb))
+                        (set! listaB (append listaB lista_posb))
+                        
                         (dibujar (car lista_x) (car lista_y) b)
                         (set! lista_x (cdr lista_x))
                         (set! lista_y (cdr lista_y))
                         (set! lista_nodos(append lista_nodos (list b)))))
-
+                 (define listaT (append listaA listaB))
+                 
+                 ;(print (verificar a listaA))
+                 ;(print (verificar b listaB))
+                 (dib_line (car (verificar a listaT)) (cdr (verificar a listaT)) (car (verificar b listaT)) (cdr (verificar b listaT)))
                  )])
+
+; Función para verificar si el nodo se creó anteriormente para generar la línea
+
+(define (verificar nodoa lista1)
+  (cond
+    ((string=? nodoa (car lista1)) (cons (cadr lista1) (caddr lista1)))
+    (else (verificar nodoa (cdddr lista1)))))
+
 
 ; Función miembro complementaria
 
@@ -151,15 +211,16 @@
 
 
 (define (dibujar x y nodo)
-  (send dc2 set-brush "green" 'solid)
+  (send dc2 set-brush "Pale Turquoise" 'solid)
   (send dc2 draw-ellipse x y 70 70)
   (send dc2 set-font (make-font #:size 10))
   (send dc2 draw-text nodo (+ x 5) (+ y 20)))
 
 
 (define (dib_line x1 y1 x2 y2)
-  (send dc2 set-brush "black" 'solid)
-  (send dc2 draw-spline (+ 35 x1) (+ 35 y1) (+ 35 x1) (+ 35 y1) (+ 35 x2) (+ 35 y2)))
+  (send dc2 set-brush "teal" 'solid)
+  (send dc2 draw-spline (+ 35 x1) (+ 35 y1) (+ 35 x1) (+ 35 y1) (+ 35 x2) (+ 35 y2))
+  (send dc2 draw-ellipse (+ 30 x2) (+ 30 y2) 10 10))
 
 
 
