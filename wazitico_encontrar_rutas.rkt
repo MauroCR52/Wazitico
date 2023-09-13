@@ -1,19 +1,15 @@
 #lang racket
-
-(provide todas_rutas)
-;(define g '((C((E 4)))(B((C 2)))(A((B 2)(E 6)))))
-
-
+(provide golazo)
+;(define g '((C((E 4)))(B((C 2)))(A((B 2)(E 6)))(E((A 1)(B 4)))))
 ;invertir un nodo y sus elementos
 (define (invertir invertirAux rutas)
-  (cond ( (null? rutas) invertirAux)
+  (cond ((null? rutas) invertirAux)
         (else
          (invertir (append (list (reverse (car rutas))) invertirAux)(cdr rutas)))))
 
 ;Indicar los nodos adyacentes de un nodo
 (define (adyacente nodo grafo)
   (adyacente_aux (assoc nodo grafo) nodo grafo))  ;Assoc retorna la lista que cumpla que el car, es igual al elemento dado
-
 (define (adyacente_aux comprobar nodo grafo) ;
   (cond((equal? comprobar  #f)#f)  
        (else(cond ((null? (cdr comprobar))
@@ -29,20 +25,17 @@
 
 ;Retorna las relaciones de los nodos con la forma (destino origen), para ayudar a la función de ecnontrar todas las rutas posibles
 (define (nodos_vecinos ruta grafo)
-  (nodos_vecinos_aux ruta '() grafo (adyacente (car ruta) grafo))
-  )
+  (nodos_vecinos_aux ruta '() grafo (adyacente (car ruta) grafo)))
 (define (nodos_vecinos_aux ruta rutaGenerada grafo adyacente)
   (cond ((null? adyacente) rutaGenerada)
         (else
          (cond ((comprobar_nodo_ruta (caar adyacente) ruta)
                 (nodos_vecinos_aux ruta rutaGenerada grafo (cdr adyacente)))
-               (else 
+               (else
                  (nodos_vecinos_aux ruta(append (list (cons (caar adyacente) ruta)) rutaGenerada) grafo (cdr adyacente))))
        )
      )
   )
-
-
 ;Comprueba si en un recorrido, se llegó del nodo origen, al destino
 (define (comprobar_destino destino recorrido)
   (equal? destino (car recorrido)))
@@ -58,21 +51,33 @@
         (else
          (todas_rutas_aux
           (append (nodos_vecinos (car rutas) grafo) (cdr rutas)) destino grafo final))))
-(displayln (todas_rutas 'A 'B '((C((E 4)))(B ((C 2)))(A ((B 2)(E 6))) (E((A 1))))))
 
+;retorna el peso de una relación origen destino
+(define (obtener_peso_O_D origen destino grafo)
+  (car(cdr(assoc destino(cadr(assoc origen grafo))))))
 
-;(assoc 'B(cdr(assoc 'A g)))
+;agarra una sublista con una ruta, y me retorna su peso total.
+(define (peso_total_ruta ruta grafo)
+  (peso_total_ruta_aux ruta 0 grafo))
+(define (peso_total_ruta_aux lista suma grafo)
+  (cond((empty? (cdr lista))suma)  
+       (else (peso_total_ruta_aux(cdr lista)(+ suma(obtener_peso_O_D (car lista) (cadr lista) grafo)) grafo))))
 
-;retorna una lista con el peso de todas las rutas, utilizando la lista obtenida en todas_rutas
+;función que coloca enfrente de todas las listas su peso (hace un centro a la función rutas_ordenadas para que meta gol)
+(define (centro todas_rutas grafo)
+  (centro_aux todas_rutas '() grafo))
+(define (centro_aux lista lista_n grafo)
+    (cond((empty?  lista)lista_n)
+         (else (centro_aux (cdr lista)(cons(cons(peso_total_ruta(car lista)grafo)(car lista)) lista_n)grafo))))
 
-;(define (peso_todas_rutas)
-;  (cond ((null? ruta) num)
-;        (else
-;         (distanciaTotalRuta(+ num (car))))))
+;ORDENA todas las rutas dependiendo de su primer nodo
+(define (comparar-sublistas a b)
+  (< (car a) (car b)))
+(define (lista-ordenada lst)
+  (sort lst comparar-sublistas))
 
+;después de recibir el centro de la función centro, se entrega al usuario las rutas
+(define (golazo origen destino g)
+  (lista-ordenada (sort(centro(todas_rutas origen destino g) g) comparar-sublistas)))
 
-
-
-
-
-
+;(golazo 'A 'B g)
