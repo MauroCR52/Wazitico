@@ -197,8 +197,8 @@
                  (define destino (send choice2 get-string-selection))
                  ;[print origen]
                  ;[print destino]
-                 (print (todas_rutas origen destino grafoVacio))
-                 (dib_rutas (todas_rutas origen destino grafoVacio)))])
+                 (displayln (golazo origen destino grafoVacio))
+                 (dib_rutas (golazo origen destino grafoVacio)))])
 
 
 ; Se crea la canva donde se va a generar el grafo
