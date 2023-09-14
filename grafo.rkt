@@ -61,24 +61,6 @@
   (display "Grafo:")
   (displayln grafo))
 
-(define (main)
-  (define grafo1 '())
-  (displayln "Grafo vacío creado.")
-  
-  (define grafo2 (agregar_arista grafo1 "A" "B" 2))
-  (mostrar-grafo grafo2)
-
-  (define grafo3 (agregar_arista grafo2 "B" "C" 2))
-  (mostrar-grafo grafo3)
-
-  (define grafo4 (agregar_arista grafo3 "C" "E" 4))
-  (mostrar-grafo grafo4)
-
-  (define grafo5 (agregar_arista grafo4 "B" "E" 6))
-  (mostrar-grafo grafo5)
-  
-  )
-
 
 ;FUNCIONES PARA ENCONTRAR RUTAS
 

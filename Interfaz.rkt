@@ -30,7 +30,7 @@
 ; Listas con las posiciones donde van a aparecer los nodos
 
 (define lista_x '(80 80 200 350 500 200 350 500 620 620 0))
-(define lista_y  '(130 250 40 40 40 340 340 340 130 250 0))
+(define lista_y  '(150 270 60 60 60 360 360 360 150 270 0))
 (define lista_nodos null)
 
 (define lista_posa null)
@@ -82,6 +82,7 @@
                  ;(print lista_nodos)
                  
                  (set! grafoVacio (agregar_arista grafoVacio a b c))
+                 (set! grafoVacio (agregar_arista grafoVacio b b 0))
                  (mostrar-grafo grafoVacio)
 
                  ;(displayln (todas_rutas ))
@@ -225,13 +226,16 @@
 (define (dib_line x1 y1 x2 y2)
   (send dc2 set-brush "teal" 'solid)
   (send dc2 draw-spline (+ 35 x1) (+ 35 y1) (+ 35 x1) (+ 35 y1) (+ 35 x2) (+ 35 y2))
-  (send dc2 draw-ellipse (+ 30 x2) (+ 30 y2) 10 10))
+  (send dc2 draw-ellipse (+ 30 x2) (+ 30 y2) 10 10)
+  (send dc2 draw-text (~v(send texto3 get-value)) (/ (+ 80 x1 x2) 2) (/ (+ 65 y1 y2) 2))) 
 
 (define (dib_rutas lista)
-  (send dc2 set-brush "gray" 'solid)
-  (send dc2 draw-rectangle 300 410 300 40)
-  (send dc2 draw-text "Rutas encontradas:" 150 420)
-  (send dc2 draw-text (format "~a" lista) 350 420))
+  (send dc2 set-brush "white" 'solid)
+  (send dc2 draw-rectangle 300 0 300 40)
+  (send dc2 draw-text "Ruta más rápida:" 150 0)
+  (send dc2 draw-text (format "~a" (car lista)) 350 0)
+  (send dc2 draw-text "Demás rutas:" 150 20)
+  (send dc2 draw-text (format "~a" (cdr lista)) 350 20))
 
 
 
